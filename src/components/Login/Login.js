@@ -15,14 +15,14 @@ const Login = (props) => {
         console.log("Effect Running");
 
         return () => {
-            console.log("Effect Clean up!");
+            console.log("Effect Clean up");
         };
     }, []);
 
     useEffect(() => {
         // 디바운싱 : 사용자가 타이핑을 일시 중지했을 때(입력을 끝냈을 때), 유효성 검사 실시.
         const identifier = setTimeout(() => {
-            console.log("Checking form validity!");
+            console.log("Checking form validity");
             setFormIsValid(
                 enteredEmail.includes("@") && enteredPassword.trim().length > 6
             );
