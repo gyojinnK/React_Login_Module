@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
+
+const emailReducer = (state, action) => {
+    return { value: "", isValid: false };
+};
 
 const Login = (props) => {
     const [enteredEmail, setEnteredEmail] = useState("");
@@ -10,6 +14,11 @@ const Login = (props) => {
     const [enteredPassword, setEnteredPassword] = useState("");
     const [passwordIsValid, setPasswordIsValid] = useState();
     const [formIsValid, setFormIsValid] = useState(false);
+
+    const [emailState, dispatchEmail] = useReducer(emailReducer, {
+        value: "",
+        isValid: false,
+    });
 
     useEffect(() => {
         console.log("Effect Running");
@@ -19,23 +28,23 @@ const Login = (props) => {
         };
     }, []);
 
-    useEffect(() => {
-        // 디바운싱 : 사용자가 타이핑을 일시 중지했을 때(입력을 끝냈을 때), 유효성 검사 실시.
-        const identifier = setTimeout(() => {
-            console.log("Checking form validity");
-            setFormIsValid(
-                enteredEmail.includes("@") && enteredPassword.trim().length > 6
-            );
-        }, 500);
+    // useEffect(() => {
+    //     // 디바운싱 : 사용자가 타이핑을 일시 중지했을 때(입력을 끝냈을 때), 유효성 검사 실시.
+    //     const identifier = setTimeout(() => {
+    //         console.log("Checking form validity");
+    //         setFormIsValid(
+    //             enteredEmail.includes("@") && enteredPassword.trim().length > 6
+    //         );
+    //     }, 500);
 
-        // useEffect는 "함수"!를 리턴할 수 있음
-        // 클린업 함수라고 함
-        // 클린업 함수는 모든 새로운 사이드이펙트 함수가 실행되기 전에, 그리고 컴포넌트가 제거되기 전에 실행된다.
-        return () => {
-            console.log("clean up!");
-            clearTimeout(identifier);
-        };
-    }, [enteredEmail, enteredPassword]);
+    //     // useEffect는 "함수"!를 리턴할 수 있음
+    //     // 클린업 함수라고 함
+    //     // 클린업 함수는 모든 새로운 사이드이펙트 함수가 실행되기 전에, 그리고 컴포넌트가 제거되기 전에 실행된다.
+    //     return () => {
+    //         console.log("clean up!");
+    //         clearTimeout(identifier);
+    //     };
+    // }, [enteredEmail, enteredPassword]);
 
     const emailChangeHandler = (event) => {
         setEnteredEmail(event.target.value);
@@ -43,6 +52,11 @@ const Login = (props) => {
 
     const passwordChangeHandler = (event) => {
         setEnteredPassword(event.target.value);
+
+        setFormIsValid(
+            emailState.value.includes("@") &&
+                event.target.value.trim().length > 6
+        );
     };
 
     const validateEmailHandler = () => {
